@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Copa 2026 — Análise Preditiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0d;--paper:#f5f4f0;--surface:#ffffff;--surface2:#f0efe9;--surface3:#e8e7e0;
+  --border:#dddbd3;--border2:#c8c6bc;
+  --t1:#0d0d0d;--t2:#555550;--t3:#999990;
+  --accent:#1a5c38;--accent-dim:#1a5c3812;
+  --red:#c0392b;--amber:#c97d10;--blue:#1a3a5c;
+  --mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--t1);-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+
+/* ─── NAV ─── */
+nav{position:sticky;top:0;z-index:200;background:rgba(245,244,240,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 24px}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.logo-flag{font-size:18px;line-height:1}
+.logo-text{font-size:13px;font-weight:700;letter-spacing:-.2px;color:var(--t1)}
+.logo-text em{color:var(--t3);font-style:normal;font-weight:400}
+.nav-tabs{display:flex;gap:1px}
+.ntab{font-size:13px;color:var(--t2);padding:6px 11px;border-radius:5px;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;transition:all .12s;letter-spacing:-.1px}
+.ntab:hover{color:var(--t1);background:var(--surface2)}
+.ntab.on{color:var(--t1);font-weight:600}
+.nav-right{display:flex;align-items:center;gap:6px}
+.ml-badge{font-family:var(--mono);font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--accent-dim);color:var(--accent);border:1px solid #1a5c3825;letter-spacing:.02em;cursor:default}
+.ml-badge.stale{background:#c97d1015;color:var(--amber);border-color:#c97d1030}
+.ml-badge.error{background:#c0392b15;color:var(--red);border-color:#c0392b30}
+
+/* ─── PAGES ─── */
+.page{display:none;max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+.page.on{display:block}
+
+/* ─── SYNC BANNER ─── */
+.sync-banner{max-width:1100px;margin:0 auto;padding:10px 24px;font-size:12px;font-family:var(--mono);color:var(--t2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.sync-banner.error{background:#c0392b08;color:var(--red)}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:6px}
+.sync-banner.error .sync-dot{background:var(--red)}
+.retry-btn{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:4px;border:1px solid var(--border2);background:none;color:var(--t2);cursor:pointer;transition:all .12s}
+.retry-btn:hover{border-color:var(--t3);color:var(--t1)}
+
+/* ─── HERO ─── */
+.hero{padding:64px 0 48px;border-bottom:1px solid var(--border);margin-bottom:48px}
+.hero-top{display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start}
+@media(max-width:700px){.hero-top{grid-template-columns:1fr}.hero-aside{display:none}}
+.hero-kicker{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.hero-h1{font-size:clamp(38px,5vw,60px);font-weight:800;letter-spacing:-2.5px;line-height:1.02;margin-bottom:16px;color:var(--t1)}
+.hero-h1 span{color:var(--accent)}
+.hero-sub{font-size:16px;color:var(--t2);line-height:1.65;max-width:440px;margin-bottom:28px}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-primary{font-size:13px;font-weight:600;padding:9px 18px;border-radius:5px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .12s;letter-spacing:-.1px}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{font-size:13px;font-weight:400;padding:9px 18px;border-radius:5px;border:1px solid var(--border2);background:none;color:var(--t2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s}
+.btn-ghost:hover{color:var(--t1);border-color:var(--t3)}
+.hero-aside{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.aside-head{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.aside-head-label{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.06em;text-transform:uppercase}
+.model-info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px}
+.model-info-row:last-child{border-bottom:none}
+.mi-label{color:var(--t2)}
+.mi-val{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--t1)}
+.mi-val.green{color:var(--accent)}
+.hero-stats{display:flex;gap:0;margin-top:40px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.hstat{flex:1;padding:18px 20px;border-right:1px solid var(--border);background:var(--surface)}
+.hstat:last-child{border-right:none}
+.hstat-num{font-size:22px;font-weight:800;letter-spacing:-1px;color:var(--t1)}
+.hstat-label{font-size:11px;color:var(--t3);margin-top:2px;font-family:var(--mono)}
+
+/* ─── SECTION ─── */
+.sec-kicker{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.sec-title{font-size:clamp(20px,2.5vw,26px);font-weight:700;letter-spacing:-1px;margin-bottom:6px}
+.sec-sub{font-size:14px;color:var(--t2);margin-bottom:28px;line-height:1.6}
+.section-block{margin-bottom:56px}
+
+/* ─── MATCH CARDS ─── */
+.matches-list{display:flex;flex-direction:column;gap:6px}
+.match-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;transition:border-color .12s}
+.match-card:hover{border-color:var(--border2)}
+.match-head{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.match-group{font-family:var(--mono);font-size:10px;font-weight:500;color:var(--t3);letter-spacing:.05em}
+.match-meta{font-size:11px;color:var(--t3)}
+.match-body{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:13px 14px;gap:12px}
+.team-l{display:flex;align-items:center;gap:8px}
+.team-r{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.tf{font-size:18px;line-height:1}
+.tn{font-size:13.5px;font-weight:500;letter-spacing:-.1px}
+.score-center{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:90px}
+.score-nums{display:flex;align-items:center;gap:8px}
+.sn{font-size:22px;font-weight:800;letter-spacing:-1px;font-family:var(--mono)}
+.sdash{font-size:14px;color:var(--t3)}
+.score-label{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;font-family:var(--mono);letter-spacing:.04em}
+.done{background:#1a5c3812;color:var(--accent)}
+.live-pill{background:#c0392b15;color:var(--red)}
+.sched{background:var(--surface3);color:var(--t3)}
+.match-probs{padding:0 14px 11px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.prob-col{display:flex;flex-direction:column;gap:3px}
+.prob-col-label{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.04em;text-transform:uppercase}
+.prob-track{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.prob-fill{height:100%;border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.prob-num{font-family:var(--mono);font-size:11px;font-weight:500}
+.filter-row{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.ftab{font-size:12px;padding:5px 12px;border-radius:4px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--t2);font-family:'Inter',sans-serif;transition:all .12s}
+.ftab:hover{border-color:var(--border2);color:var(--t1)}
+.ftab.on{background:var(--t1);color:var(--paper);border-color:var(--t1)}
+
+/* ─── TITLE ODDS ─── */
+.title-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.title-card{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:14px;cursor:pointer;transition:border-color .12s}
+.title-card:hover{border-color:var(--border2)}
+.title-card.active{border-color:var(--accent);background:var(--accent-dim)}
+.tc-flag{font-size:22px;margin-bottom:8px}
+.tc-name{font-size:13.5px;font-weight:600;letter-spacing:-.2px;margin-bottom:4px}
+.tc-rank{font-size:11px;color:var(--t2);margin-bottom:10px;font-family:var(--mono)}
+.tc-bar-wrap{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.tc-bar{height:100%;border-radius:2px}
+.tc-pct{font-family:var(--mono);font-size:12px;font-weight:600}
+
+/* ─── EMPTY / ERROR STATES ─── */
+.empty-state{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:32px 24px;text-align:center}
+.empty-state-title{font-size:14px;font-weight:600;margin-bottom:6px}
+.empty-state-sub{font-size:13px;color:var(--t2);line-height:1.6;max-width:400px;margin:0 auto 16px}
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:7px;height:84px;margin-bottom:6px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+footer{border-top:1px solid var(--border);padding:20px 24px;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer-left,.footer-right{font-family:var(--mono);font-size:11px;color:var(--t3)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeIn .2s ease}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="logo" onclick="go('home')">
+      <span class="logo-flag">⚽</span>
+      <span class="logo-text">Copa 2026 <em>Analytics</em></span>
+    </a>
+    <div class="nav-tabs">
+      <button class="ntab on" id="nt-home"     onclick="go('home')">Início</button>
+      <button class="ntab"    id="nt-results"  onclick="go('results')">Jogos</button>
+      <button class="ntab"    id="nt-champion" onclick="go('champion')">Campeão</button>
+    </div>
+    <div class="nav-right">
+      <span class="ml-badge" id="model-badge">carregando…</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ SYNC STATUS BANNER ═══ -->
+<div class="sync-banner" id="sync-banner">
+  <span><span class="sync-dot" id="sync-dot"></span><span id="sync-text">Conectando ao live.json…</span></span>
+  <button class="retry-btn" id="retry-btn" onclick="loadData()" style="display:none">Tentar novamente</button>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div id="pg-home" class="page on">
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <div class="hero-kicker">Copa do Mundo FIFA 2026 · EUA · México · Canadá</div>
+        <h1 class="hero-h1">48 seleções.<br><span>Um modelo.</span><br>Atualizado a cada hora.</h1>
+        <p class="hero-sub">Probabilidades calculadas por regressão logística treinada em partidas históricas de Copa do Mundo. Os dados são atualizados automaticamente via GitHub Actions a cada hora.</p>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="go('results')">Ver jogos</button>
+          <button class="btn-ghost" onclick="go('champion')">Ver favoritos ao título</button>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <div class="aside-head"><span class="aside-head-label">Modelo ativo</span></div>
+        <div id="model-info-rows">
+          <div class="model-info-row"><span class="mi-label">Status</span><span class="mi-val">carregando…</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-stats" id="hero-stats">
+      <div class="hstat"><div class="hstat-num">—</div><div class="hstat-label">seleções</div></div>
+      <div class="hstat"><div class="hstat-num">—</div><div class="hstat-label">partidas</div></div>
+      <div class="hstat"><div class="hstat-num">—</div><div class="hstat-label">acurácia</div></div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="sec-kicker">Jogos</div>
+    <h2 class="sec-title">Partidas recentes e próximas</h2>
+    <p class="sec-sub">Atualizado automaticamente a partir do live.json.</p>
+    <div class="matches-list" id="home-matches"><div class="skeleton"></div><div class="skeleton"></div></div>
+  </div>
+
+  <div class="section-block">
+    <div class="sec-kicker">Maiores favoritos</div>
+    <h2 class="sec-title">Top candidatos ao título</h2>
+    <p class="sec-sub">Probabilidade calculada por simulação de torneio com o modelo treinado.</p>
+    <div class="title-grid" id="home-title-grid"></div>
+  </div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div id="pg-results" class="page">
+  <div class="sec-kicker">Fase de grupos</div>
+  <h2 class="sec-title" style="margin-bottom:4px">Jogos & Resultados</h2>
+  <p class="sec-sub">Placares reais onde disponíveis. Previsão ML nos próximos jogos.</p>
+  <div class="filter-row">
+    <button class="ftab on" onclick="filterMatches('all',this)">Todos</button>
+    <button class="ftab"    onclick="filterMatches('done',this)">Encerrados</button>
+    <button class="ftab"    onclick="filterMatches('sched',this)">Próximos</button>
+  </div>
+  <div class="matches-list" id="all-matches"></div>
+</div>
+
+<!-- ═══ CHAMPION ═══ -->
+<div id="pg-champion" class="page">
+  <div class="sec-kicker">Probabilidade de título</div>
+  <h2 class="sec-title" style="margin-bottom:4px">Quem vai ganhar?</h2>
+  <p class="sec-sub">Probabilidades geradas por simulação de torneio com o modelo de regressão logística.</p>
+  <div class="title-grid" id="champion-grid"></div>
+</div>
+
+<footer>
+  <span class="footer-left">Copa 2026 Analytics</span>
+  <span class="footer-right" id="footer-updated">scikit-learn · pandas · numpy</span>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   CONFIG — ajuste para o seu repositório
+══════════════════════════════════════════ */
+// Aponte para o live.json publicado no seu repo GitHub via raw.githubusercontent.com
+// Formato: https://raw.githubusercontent.com/USUARIO/REPO/main/data/live.json
+const LIVE_JSON_URL = 'data/live.json'; // caminho relativo funciona se o site for servido do mesmo repo
+
+const TITLE_PT = {
+  'France':'França','Netherlands':'Holanda','Colombia':'Colômbia','Germany':'Alemanha',
+  'Argentina':'Argentina','Belgium':'Bélgica','England':'Inglaterra','Brazil':'Brasil',
+  'Spain':'Espanha','Senegal':'Senegal','Morocco':'Marrocos','Portugal':'Portugal',
+  'Croatia':'Croácia','Switzerland':'Suíça','Uruguay':'Uruguai','Japan':'Japão',
+  'Mexico':'México','South Korea':'Coreia do Sul','USA':'EUA','Norway':'Noruega',
+  'South Africa':'África do Sul','Czech Republic':'Rep. Tcheca','Canada':'Canadá',
+  'Paraguay':'Paraguai','Australia':'Austrália','Turkey':'Turquia','Curacao':'Curaçao',
+  'Cape Verde':'Cabo Verde','Uzbekistan':'Uzbequistão','Algeria':'Argélia',
+  'Scotland':'Escócia','Haiti':'Haiti',
+};
+function ptName(en){ return TITLE_PT[en] || en; }
+
+let ML = null;
+
+/* ══ FETCH ══ */
+async function loadData(){
+  setSyncStatus('loading');
+  try{
+    const res = await fetch(LIVE_JSON_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(!data.matches || !data.matches.length){
+      throw new Error('live.json respondeu mas sem partidas');
+    }
+    ML = data;
+    renderAll();
+    setSyncStatus('ok', data.last_updated);
+  }catch(err){
+    console.error('Falha ao carregar live.json:', err);
+    setSyncStatus('error', null, err.message);
+    renderErrorState();
+  }
+}
+
+function setSyncStatus(state, lastUpdated, errMsg){
+  const banner = document.getElementById('sync-banner');
+  const dot    = document.getElementById('sync-dot');
+  const text   = document.getElementById('sync-text');
+  const retry  = document.getElementById('retry-btn');
+  const badge  = document.getElementById('model-badge');
+
+  banner.classList.remove('error');
+  retry.style.display = 'none';
+
+  if(state === 'loading'){
+    text.textContent = 'Conectando ao live.json…';
+    badge.textContent = 'carregando…';
+    badge.className = 'ml-badge';
+  } else if(state === 'ok'){
+    text.textContent = `Sincronizado · última atualização ${lastUpdated}`;
+    badge.textContent = ML.model && ML.model.name ? `${ML.model.name} · ${ML.model.accuracy}% acc` : 'modelo ativo';
+    badge.className = 'ml-badge';
+  } else if(state === 'error'){
+    banner.classList.add('error');
+    text.textContent = `Não foi possível carregar dados ao vivo (${errMsg || 'erro desconhecido'})`;
+    retry.style.display = 'inline-block';
+    badge.textContent = 'sem conexão';
+    badge.className = 'ml-badge error';
+  }
+}
+
+function renderErrorState(){
+  const msg = `<div class="empty-state">
+    <div class="empty-state-title">Não foi possível carregar os dados ao vivo</div>
+    <div class="empty-state-sub">O arquivo live.json não respondeu. Isso é esperado se você estiver abrindo este HTML diretamente do disco (file://) em vez de servir pelo GitHub Pages ou um servidor local — o navegador bloqueia fetch local por segurança. Veja o README para instruções de hospedagem.</div>
+  </div>`;
+  document.getElementById('home-matches').innerHTML = msg;
+  document.getElementById('all-matches').innerHTML = msg;
+  document.getElementById('home-title-grid').innerHTML = '';
+  document.getElementById('champion-grid').innerHTML = '';
+}
+
+/* ══ RENDER ══ */
+function matchCard(m){
+  const f1 = m.f1 || '🏳', f2 = m.f2 || '🏳';
+  const t1pt = ptName(m.t1), t2pt = ptName(m.t2);
+  const isDone = m.status === 'done';
+  const isLive = m.status === 'live';
+  const hasProb = typeof m.w1 === 'number';
+  const s1disp = isDone||isLive ? m.s1 : (hasProb ? m.ps1 : '–');
+  const s2disp = isDone||isLive ? m.s2 : (hasProb ? m.ps2 : '–');
+  const scoreColor = (isDone||isLive) ? 'var(--t1)' : 'var(--t3)';
+  const statusClass = isDone ? 'done' : isLive ? 'live-pill' : 'sched';
+  const statusText  = isDone ? 'Encerrado' : isLive ? '● Em andamento' : (hasProb ? 'Previsão ML' : 'Agendado');
+
+  let probsHTML = '';
+  if(hasProb){
+    const maxW = Math.max(m.w1, m.draw, m.w2);
+    const c1 = m.w1===maxW ? 'var(--accent)' : 'var(--border2)';
+    const cd = m.draw===maxW ? 'var(--amber)' : 'var(--border2)';
+    const c2 = m.w2===maxW ? 'var(--accent)' : 'var(--border2)';
+    probsHTML = `<div class="match-probs">
+      <div class="prob-col"><span class="prob-col-label">${t1pt.split(' ')[0]}</span><div class="prob-track"><div class="prob-fill" style="width:${m.w1}%;background:${c1}"></div></div><span class="prob-num" style="color:${c1}">${m.w1}%</span></div>
+      <div class="prob-col"><span class="prob-col-label">Empate</span><div class="prob-track"><div class="prob-fill" style="width:${m.draw}%;background:${cd}"></div></div><span class="prob-num" style="color:${cd}">${m.draw}%</span></div>
+      <div class="prob-col" style="align-items:flex-end"><span class="prob-col-label">${t2pt.split(' ')[0]}</span><div class="prob-track"><div class="prob-fill" style="width:${m.w2}%;background:${c2}"></div></div><span class="prob-num" style="color:${c2}">${m.w2}%</span></div>
+    </div>`;
+  }
+
+  return `<div class="match-card fade">
+    <div class="match-head"><span class="match-group">${m.group||''}</span><span class="match-meta">${m.date||''} ${m.time?'· '+m.time:''}</span></div>
+    <div class="match-body">
+      <div class="team-l"><span class="tf">${f1}</span><span class="tn">${t1pt}</span></div>
+      <div class="score-center">
+        <div class="score-nums"><span class="sn" style="color:${scoreColor}">${s1disp}</span><span class="sdash">–</span><span class="sn" style="color:${scoreColor}">${s2disp}</span></div>
+        <span class="score-label ${statusClass}">${statusText}</span>
+      </div>
+      <div class="team-r"><span class="tn">${t2pt}</span><span class="tf">${f2}</span></div>
+    </div>
+    ${probsHTML}
+  </div>`;
+}
+
+function titleCard(name, pct){
+  const flag = ML.matches.flatMap(m=>[[m.t1,m.f1],[m.t2,m.f2]]).find(([n])=>n===name)?.[1] || '🏳';
+  const namePt = ptName(name);
+  const barW = Math.min(100, pct * 3.5);
+  return `<div class="title-card">
+    <div class="tc-flag">${flag}</div>
+    <div class="tc-name">${namePt}</div>
+    <div class="tc-rank">${pct}% probabilidade</div>
+    <div class="tc-bar-wrap"><div class="tc-bar" style="width:${barW}%;background:var(--accent)"></div></div>
+    <div class="tc-pct" style="color:var(--accent)">${pct}%</div>
+  </div>`;
+}
+
+function renderAll(){
+  // Hero stats
+  const totalTeams = new Set(ML.matches.flatMap(m=>[m.t1,m.t2])).size;
+  document.getElementById('hero-stats').innerHTML = `
+    <div class="hstat"><div class="hstat-num">${totalTeams}</div><div class="hstat-label">seleções nos jogos</div></div>
+    <div class="hstat"><div class="hstat-num">${ML.matches.length}</div><div class="hstat-label">partidas no feed</div></div>
+    <div class="hstat"><div class="hstat-num">${ML.model?.accuracy||'—'}%</div><div class="hstat-label">acurácia do modelo</div></div>
+  `;
+
+  // Model info panel
+  if(ML.model && ML.model.name){
+    document.getElementById('model-info-rows').innerHTML = `
+      <div class="model-info-row"><span class="mi-label">Algoritmo</span><span class="mi-val">${ML.model.name}</span></div>
+      <div class="model-info-row"><span class="mi-label">Acurácia</span><span class="mi-val green">${ML.model.accuracy}%</span></div>
+      <div class="model-info-row"><span class="mi-label">Partidas de treino</span><span class="mi-val">${ML.model.n_train}</span></div>
+      <div class="model-info-row"><span class="mi-label">Última sincronização</span><span class="mi-val">${ML.last_updated}</span></div>
+    `;
+  }
+
+  // Matches — home shows first 4, results shows all
+  const sortedMatches = [...ML.matches];
+  document.getElementById('home-matches').innerHTML = sortedMatches.slice(0,4).map(matchCard).join('') || '<p style="color:var(--t3);font-size:13px">Nenhuma partida no feed ainda.</p>';
+  document.getElementById('all-matches').innerHTML = sortedMatches.map(matchCard).join('');
+
+  // Titles
+  const titleEntries = Object.entries(ML.titles || {});
+  document.getElementById('home-title-grid').innerHTML = titleEntries.slice(0,5).map(([n,p])=>titleCard(n,p)).join('') || '<p style="color:var(--t3);font-size:13px">Probabilidades de título ainda não calculadas.</p>';
+  document.getElementById('champion-grid').innerHTML = titleEntries.map(([n,p])=>titleCard(n,p)).join('');
+
+  document.getElementById('footer-updated').textContent = `scikit-learn · pandas · numpy · atualizado ${ML.last_updated}`;
+}
+
+function filterMatches(f, btn){
+  document.querySelectorAll('.filter-row .ftab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(!ML) return;
+  let list = ML.matches;
+  if(f==='done')  list = ML.matches.filter(m=>m.status==='done');
+  if(f==='sched') list = ML.matches.filter(m=>m.status==='sched');
+  document.getElementById('all-matches').innerHTML = list.length ? list.map(matchCard).join('') : '<p style="color:var(--t3);font-size:13px;padding:16px">Nenhum jogo encontrado.</p>';
+}
+
+/* ══ NAV ══ */
+function go(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('on'));
+  document.getElementById('pg-'+p).classList.add('on');
+  document.getElementById('nt-'+p).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ══ INIT ══ */
+loadData();
+// Recarrega automaticamente a cada 5 minutos enquanto a aba estiver aberta
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>

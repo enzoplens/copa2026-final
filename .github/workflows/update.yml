@@ -1,0 +1,48 @@
+name: Atualizar dados Copa 2026
+
+on:
+  schedule:
+    # Roda a cada hora (UTC) durante o período da Copa
+    - cron: '0 * * * *'
+
+  # Permite rodar manualmente pelo painel do GitHub
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # necessário para fazer commit do JSON atualizado
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          pip install scikit-learn pandas numpy requests
+
+      - name: Buscar resultados e rodar modelo
+        env:
+          FOOTBALL_API_TOKEN: ${{ secrets.FOOTBALL_API_TOKEN }}
+        run: |
+          python scripts/update.py
+
+      - name: Verificar se houve mudanças
+        id: check
+        run: |
+          git diff --quiet data/ || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit e push do JSON atualizado
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name  "Copa 2026 Bot"
+          git config user.email "bot@copa2026.io"
+          git add data/
+          git commit -m "⚽ Atualização automática — $(date -u '+%d/%m %H:%M UTC')"
+          git push
