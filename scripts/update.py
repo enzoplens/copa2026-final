@@ -145,9 +145,25 @@ def fetch_matches():
         return []
 
 # ─── Processa partida da API → formato padrão ────────────────
+def safe_team_name(team_obj):
+    """
+    Extrai o nome do time com segurança. Partidas de fases futuras
+    ainda não definidas (ex: 'Vencedor do Grupo A vs Vencedor do
+    Grupo B') costumam vir com homeTeam/awayTeam como null ou com
+    name ausente. Sem este tratamento, isso quebra tanto aqui
+    quanto no frontend (matchCard chama .split() no nome do time).
+    """
+    if not team_obj or not isinstance(team_obj, dict):
+        return 'A definir'
+    name = team_obj.get('name')
+    if not name:
+        return 'A definir'
+    return NAME_MAP.get(name, name)
+
+
 def process_api_match(m):
-    home = NAME_MAP.get(m['homeTeam']['name'], m['homeTeam']['name'])
-    away = NAME_MAP.get(m['awayTeam']['name'], m['awayTeam']['name'])
+    home = safe_team_name(m.get('homeTeam'))
+    away = safe_team_name(m.get('awayTeam'))
 
     status = m['status']           # FINISHED | SCHEDULED | IN_PLAY | PAUSED
     stage  = m.get('stage', 'GROUP_STAGE')
@@ -271,8 +287,13 @@ def main():
     if raw_matches:
         matches = [process_api_match(m) for m in raw_matches]
 
-        # Adiciona previsões ML nos jogos não encerrados
+        # Adiciona previsões ML nos jogos não encerrados, exceto
+        # confrontos futuros do mata-mata cujos times ainda não
+        # foram definidos (ex: "Vencedor do Grupo A vs ...").
+        # Prever isso geraria probabilidades sem sentido nenhum.
         for m in matches:
+            if m['t1'] == 'A definir' or m['t2'] == 'A definir':
+                continue
             ph = PHASE_MAP.get(m['stage'], 0)
             pred = predict_match(m['t1'], m['t2'], ph, model, stats)
             m['w1']     = pred['win1']
@@ -287,7 +308,7 @@ def main():
         matches = existing.get('matches', [])
         print(f"ℹ️   Usando {len(matches)} partidas do cache local")
         for m in matches:
-            if m['status'] == 'sched':
+            if m['status'] == 'sched' and m['t1'] != 'A definir' and m['t2'] != 'A definir':
                 ph   = PHASE_MAP.get(m.get('stage','GROUP_STAGE'), 0)
                 pred = predict_match(m['t1'], m['t2'], ph, model, stats)
                 m['w1']  = pred['win1']
