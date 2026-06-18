@@ -313,7 +313,8 @@ function renderErrorState(){
 /* ══ RENDER ══ */
 function matchCard(m){
   const f1 = m.f1 || '🏳', f2 = m.f2 || '🏳';
-  const t1pt = ptName(m.t1), t2pt = ptName(m.t2);
+  const t1pt = ptName(m.t1) || 'A definir';
+  const t2pt = ptName(m.t2) || 'A definir';
   const isDone = m.status === 'done';
   const isLive = m.status === 'live';
   const hasProb = typeof m.w1 === 'number';
