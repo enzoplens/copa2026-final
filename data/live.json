@@ -1,5 +1,5 @@
 {
-  "last_updated": "20/06/2026 16:28 UTC",
+  "last_updated": "20/06/2026 18:21 UTC",
   "model": {
     "name": "Logistic Regression",
     "accuracy": 71.0,
@@ -54,8 +54,8 @@
       "stage": "GROUP_STAGE",
       "date": "12 Jun",
       "time": "19:00 UTC",
-      "s1": 1,
-      "s2": 1,
+      "s1": null,
+      "s2": null,
       "status": "done",
       "w1": 17.6,
       "draw": 15.0,
@@ -624,9 +624,9 @@
       "stage": "GROUP_STAGE",
       "date": "20 Jun",
       "time": "17:00 UTC",
-      "s1": null,
-      "s2": null,
-      "status": "sched",
+      "s1": 3,
+      "s2": 0,
+      "status": "live",
       "w1": 89.0,
       "draw": 7.8,
       "w2": 3.2,
@@ -1824,36 +1824,36 @@
     }
   ],
   "titles": {
-    "France": 17.8,
-    "Netherlands": 12.9,
-    "Colombia": 9.4,
-    "Brazil": 7.0,
-    "Germany": 6.4,
-    "Argentina": 5.6,
-    "England": 5.5,
-    "Portugal": 4.7,
-    "Belgium": 4.4,
-    "Morocco": 3.2,
-    "Spain": 3.2,
-    "Croatia": 3.1,
-    "Senegal": 2.8,
-    "Switzerland": 2.1,
-    "Uruguay": 2.0,
-    "Japan": 1.6,
-    "South Korea": 1.6,
-    "Mexico": 1.4,
-    "Egypt": 1.2,
+    "France": 18.0,
+    "Netherlands": 13.5,
+    "Colombia": 8.2,
+    "Brazil": 7.1,
+    "Germany": 6.9,
+    "Argentina": 5.2,
+    "Belgium": 5.0,
+    "England": 4.8,
+    "Portugal": 4.1,
+    "Croatia": 3.7,
+    "Spain": 3.6,
+    "Morocco": 3.4,
+    "Senegal": 3.2,
+    "Japan": 2.0,
+    "Switzerland": 2.0,
+    "Uruguay": 1.8,
+    "Mexico": 1.6,
     "Norway": 1.2,
+    "South Korea": 1.1,
+    "Egypt": 1.0,
     "USA": 0.9,
-    "Sweden": 0.5,
     "Serbia": 0.4,
+    "Iran": 0.4,
+    "Sweden": 0.3,
     "Algeria": 0.3,
-    "Iran": 0.2,
-    "Tunisia": 0.2,
-    "Australia": 0.1,
-    "Paraguay": 0.0,
+    "Tunisia": 0.3,
+    "Turkey": 0.1,
+    "Australia": 0.0,
     "Austria": 0.0,
-    "Turkey": 0.0
+    "Paraguay": 0.0
   },
   "group_stats": {
     "GROUP_A": {
@@ -1898,48 +1898,6 @@
         "pts": 1
       }
     },
-    "GROUP_B": {
-      "Canada": {
-        "flag": "🇨🇦",
-        "p": 2,
-        "w": 1,
-        "d": 1,
-        "l": 0,
-        "gf": 7,
-        "ga": 1,
-        "pts": 4
-      },
-      "Bosnia-Herzegovina": {
-        "flag": "🏳",
-        "p": 2,
-        "w": 0,
-        "d": 1,
-        "l": 1,
-        "gf": 2,
-        "ga": 5,
-        "pts": 1
-      },
-      "Qatar": {
-        "flag": "🇶🇦",
-        "p": 2,
-        "w": 0,
-        "d": 1,
-        "l": 1,
-        "gf": 1,
-        "ga": 7,
-        "pts": 1
-      },
-      "Switzerland": {
-        "flag": "🇨🇭",
-        "p": 2,
-        "w": 1,
-        "d": 1,
-        "l": 0,
-        "gf": 5,
-        "ga": 2,
-        "pts": 4
-      }
-    },
     "GROUP_D": {
       "USA": {
         "flag": "🇺🇸",
@@ -1980,6 +1938,48 @@
         "gf": 0,
         "ga": 3,
         "pts": 0
+      }
+    },
+    "GROUP_B": {
+      "Qatar": {
+        "flag": "🇶🇦",
+        "p": 2,
+        "w": 0,
+        "d": 1,
+        "l": 1,
+        "gf": 1,
+        "ga": 7,
+        "pts": 1
+      },
+      "Switzerland": {
+        "flag": "🇨🇭",
+        "p": 2,
+        "w": 1,
+        "d": 1,
+        "l": 0,
+        "gf": 5,
+        "ga": 2,
+        "pts": 4
+      },
+      "Bosnia-Herzegovina": {
+        "flag": "🏳",
+        "p": 1,
+        "w": 0,
+        "d": 0,
+        "l": 1,
+        "gf": 1,
+        "ga": 4,
+        "pts": 0
+      },
+      "Canada": {
+        "flag": "🇨🇦",
+        "p": 1,
+        "w": 1,
+        "d": 0,
+        "l": 0,
+        "gf": 6,
+        "ga": 0,
+        "pts": 3
       }
     },
     "GROUP_C": {
