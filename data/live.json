@@ -1,5 +1,5 @@
 {
-  "last_updated": "19/07/2026 21:03 UTC",
+  "last_updated": "19/07/2026 23:01 UTC",
   "model": {
     "name": "Logistic Regression",
     "accuracy": 71.0,
@@ -1973,9 +1973,9 @@
       "stage": "FINAL",
       "date": "19 Jul",
       "time": "19:00 UTC",
-      "s1": 0,
+      "s1": 1,
       "s2": 0,
-      "status": "live",
+      "status": "done",
       "w1": 52.4,
       "draw": 20.1,
       "w2": 27.5,
@@ -1984,35 +1984,36 @@
     }
   ],
   "titles": {
-    "France": 17.6,
-    "Netherlands": 13.4,
-    "Colombia": 8.6,
-    "Germany": 7.3,
-    "Brazil": 7.1,
-    "Argentina": 5.1,
-    "Belgium": 4.8,
-    "England": 4.7,
-    "Portugal": 4.2,
-    "Croatia": 3.6,
+    "France": 18.1,
+    "Netherlands": 13.6,
+    "Colombia": 8.3,
+    "Brazil": 7.5,
+    "Germany": 7.2,
+    "Argentina": 5.6,
+    "Belgium": 4.9,
+    "England": 4.5,
+    "Portugal": 4.0,
+    "Croatia": 3.9,
     "Spain": 3.5,
-    "Senegal": 3.4,
-    "Morocco": 3.1,
+    "Senegal": 3.2,
+    "Morocco": 3.0,
+    "Uruguay": 2.0,
     "Japan": 2.0,
-    "Switzerland": 1.9,
-    "Uruguay": 1.9,
-    "Mexico": 1.5,
-    "South Korea": 1.4,
-    "Egypt": 1.2,
-    "Norway": 0.9,
-    "USA": 0.7,
-    "Algeria": 0.5,
-    "Serbia": 0.4,
+    "Switzerland": 1.8,
+    "Mexico": 1.2,
+    "South Korea": 1.1,
+    "Norway": 1.0,
+    "Egypt": 1.0,
+    "USA": 0.9,
     "Iran": 0.4,
-    "Sweden": 0.4,
-    "Tunisia": 0.2,
-    "Australia": 0.1,
+    "Algeria": 0.3,
+    "Sweden": 0.2,
+    "Serbia": 0.2,
+    "Tunisia": 0.1,
     "Turkey": 0.1,
-    "Austria": 0.0
+    "Australia": 0.0,
+    "Austria": 0.0,
+    "Paraguay": 0.0
   },
   "group_stats": {
     "GROUP_A": {
@@ -3147,6 +3148,28 @@
         "gf": 6,
         "ga": 4,
         "pts": 3
+      }
+    },
+    "FINAL": {
+      "Spain": {
+        "flag": "🇪🇸",
+        "p": 1,
+        "w": 1,
+        "d": 0,
+        "l": 0,
+        "gf": 1,
+        "ga": 0,
+        "pts": 3
+      },
+      "Argentina": {
+        "flag": "🇦🇷",
+        "p": 1,
+        "w": 0,
+        "d": 0,
+        "l": 1,
+        "gf": 0,
+        "ga": 1,
+        "pts": 0
       }
     }
   }
